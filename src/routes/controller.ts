@@ -13,7 +13,7 @@ export const addMovie = (req: Request<Movie>, res: Response) => {
         res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list');
     }
 
-    // todo: factory
+    // todo: may be put in a factory, but factory will be coupled tightly with a framework (needs Request typing)
     const movie: Movie = {
         id: 0,
         title: req.body.title,
@@ -29,7 +29,7 @@ export const addMovie = (req: Request<Movie>, res: Response) => {
     try {
         repository.addMovie(movie)
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added').end();
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added');
     }
 
     res.status(StatusCodes.OK).send('Movie added successfully');
