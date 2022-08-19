@@ -5,14 +5,22 @@ import {StatusCodes} from "http-status-codes";
 
 export const addMovie = (req: Request<Movie>, res: Response) => {
     const repository = createMoviesRepository();
+    const validGenres = repository.genres();
+    const genres = req.body.genres as string[];
 
+    const allGenresValid = genres.every((genre) => validGenres.includes(genre));
+    if (!allGenresValid) {
+        res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list');
+    }
+
+    // todo: factory
     const movie: Movie = {
         id: 0,
         title: req.body.title,
-        year: req.body.year, // required
-        runtime: req.body.runtime, // required
-        director: req.body.director, // required
-        genres: req.body.genres, // required, from DB only (predefined)
+        year: req.body.year,
+        runtime: req.body.runtime,
+        director: req.body.director,
+        genres: req.body.genres,
         actors: req.body.actors || null,
         plot: req.body.plot || null,
         posterUrl: req.body.posterUrl || null,
@@ -21,8 +29,7 @@ export const addMovie = (req: Request<Movie>, res: Response) => {
     try {
         repository.addMovie(movie)
     } catch (err) {
-        console.log(err);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added').end();
     }
 
     res.status(StatusCodes.OK).send('Movie added successfully');

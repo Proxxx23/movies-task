@@ -3,7 +3,7 @@ import {MoviesRepository} from "../../application/jsondb/repository";
 import {Movie} from "../../models/Movie";
 import {DBMovie} from "../../models/DBMovie";
 
-const DB_PATH = ''; // todo: ???
+const DB_PATH = '/../../db/db.json'; // fixme: ???
 
 type DB = {
     genres: string[],
@@ -16,15 +16,20 @@ function articleRepository(db: DB): MoviesRepository {
     function addMovie(movie: Movie): void {
         movie.id = getIncrementedId();
         db.movies[movie.id] = movie;
-        fs.writeFileSync(__dirname + '/../../db/db.json', JSON.stringify(db.movies.filter((x) => x !== null))); // fixme: why do we have null value here?
+
+        fs.writeFileSync(__dirname + DB_PATH, JSON.stringify(
+            {
+                genres: db.genres,
+                movies: db.movies.filter((x) => x !== null) // fixme: why do we have null value here and how to filter it out?
+            }
+        ));
     }
 
     function find(): DBMovie {
         return db.movies[0];
     }
 
-    function genres(): string[]
-    {
+    function genres(): DBMovie['genres'] {
         return db.genres;
     }
 
@@ -44,7 +49,7 @@ function articleRepository(db: DB): MoviesRepository {
 function connection(): DB {
     let db: string;
     try {
-        db = fs.readFileSync(__dirname + '/../../db/db.json', {encoding: 'utf8'});
+        db = fs.readFileSync(__dirname + DB_PATH, {encoding: 'utf8'});
         return JSON.parse(db);
     } catch (err) {
         throw new Error('Could not connect to DB.' + err);
