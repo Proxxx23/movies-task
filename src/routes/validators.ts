@@ -1,8 +1,9 @@
-import {check, validationResult} from "express-validator";
+import {body, query, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
+import {StatusCodes} from "http-status-codes";
 
-export const validateMovieRequest = [
-        check('genres')
+export const validateAddMovieRequest = [
+        body('genres')
             .isArray()
             .withMessage('Genres must be an array of strings')
             .bail()
@@ -10,7 +11,7 @@ export const validateMovieRequest = [
             .isEmpty()
             .withMessage('Genres list cannot be empty')
             .bail(),
-        check('title')
+        body('title')
             .isString()
             .withMessage('Movie title must be a string !')
             .bail()
@@ -25,7 +26,7 @@ export const validateMovieRequest = [
             )
             .withMessage('Movie title cannot be longer than 255 characters!')
             .bail(),
-        check('year')
+        body('year')
             .not()
             .isEmpty()
             .withMessage('Year of production cannot be empty!')
@@ -33,7 +34,7 @@ export const validateMovieRequest = [
             .isNumeric()
             .withMessage('Date of production must be numeric!')
             .bail(),
-        check('runtime')
+        body('runtime')
             .not()
             .isEmpty()
             .withMessage('Runtime cannot be empty!')
@@ -48,7 +49,7 @@ export const validateMovieRequest = [
             )
             .withMessage('Runtime must be within 1-999 range!')
             .bail(),
-        check('director')
+        body('director')
             .trim()
             .not()
             .isEmpty()
@@ -61,15 +62,15 @@ export const validateMovieRequest = [
             )
             .withMessage('Director name cannot be longer than 255 characters!')
             .bail(),
-        check('actors')
+        body('actors')
             .optional()
             .isString()
             .withMessage('Actors must be string!'),
-        check('plot')
+        body('plot')
             .optional()
             .isString()
             .withMessage('Plot must be string!'),
-        check('posterUrl')
+        body('posterUrl')
             .optional()
             .isURL()
             .withMessage('Poster URL must be an URL!'),
@@ -77,10 +78,34 @@ export const validateMovieRequest = [
         (req: Request, res: Response, next: NextFunction) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(422).json({errors: errors.array()});
+                return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({errors: errors.array()});
             }
 
             next();
         },
-    ]
-;
+    ];
+
+export const validateSearchRequest = [
+    query('duration')
+        .optional()
+        .isNumeric()
+        .withMessage('Duration must be numeric!')
+        .bail(),
+
+    query('genres')
+        .optional()
+        .not()
+        .isEmpty()
+        .isArray()
+        .withMessage('Genres must be specified as an non-empty array!')
+        .bail(),
+
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(StatusCodes.BAD_REQUEST).json({errors: errors.array()});
+        }
+
+        next();
+    },
+]

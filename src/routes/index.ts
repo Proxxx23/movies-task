@@ -1,6 +1,6 @@
 import express from "express";
-import {addMovie} from "./controller";
-import {validateMovieRequest} from "./validator";
+import {add, search} from "./controller";
+import {validateAddMovieRequest, validateSearchRequest} from "./validators";
 
 const router = express.Router();
 
@@ -8,6 +8,7 @@ router.get('/', (req, res) => {
     res.send('API is up and running');
 });
 
-router.post('/add', validateMovieRequest, addMovie);
+router.post('/add', validateAddMovieRequest, add);
+router.get('/search', validateSearchRequest, search);
 
 export default router;

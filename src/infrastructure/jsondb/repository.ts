@@ -5,14 +5,14 @@ import {DBMovie} from "../../models/DBMovie";
 
 const DB_PATH = '/../../db/db.json'; // fixme: ???
 
-type DB = {
+type DBTable = {
     genres: string[],
     movies: DBMovie[],
 }
 
-export const createMoviesRepository = () => articleRepository(connection());
+export const createMoviesRepository = (): MoviesRepository => articleRepository(connection());
 
-function articleRepository(db: DB): MoviesRepository {
+function articleRepository(db: DBTable): MoviesRepository {
     function addMovie(movie: Movie): void {
         movie.id = getIncrementedId();
         db.movies[movie.id] = movie;
@@ -25,8 +25,25 @@ function articleRepository(db: DB): MoviesRepository {
         ));
     }
 
-    function find(): DBMovie {
-        return db.movies[0];
+    function fetchRandom(): DBMovie {
+        return db.movies[Math.floor((Math.random() * db.movies.length))];
+    }
+
+    function find(genresList?: string[], duration?: number): DBMovie[] {
+        if (genresList) {
+            db.movies.forEach((movie) => {
+                const hasNoMatchingGenres = movie.genres.filter((genre) => genresList.includes(genre)) === [];
+                if (hasNoMatchingGenres) {
+                    delete movie;
+                }
+            });
+        }
+
+        if (duration) {
+            db.movies.filter((movie) => movie.runtime > duration - 10 && movie.runtime < duration + 10);
+        }
+
+        return db.movies;
     }
 
     function genres(): DBMovie['genres'] {
@@ -42,16 +59,17 @@ function articleRepository(db: DB): MoviesRepository {
     return {
         addMovie,
         find,
+        fetchRandom,
         genres,
     };
 }
 
-function connection(): DB {
+function connection(): DBTable {
     let db: string;
     try {
         db = fs.readFileSync(__dirname + DB_PATH, {encoding: 'utf8'});
         return JSON.parse(db);
     } catch (err) {
-        throw new Error('Could not connect to DB.' + err);
+        throw new Error('Could not connect to DB. ' + err);
     }
 }
