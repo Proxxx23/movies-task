@@ -1,7 +1,7 @@
 module.exports = {
     "root": true,
     "ignorePatterns": ["**/*"],
-    "plugins": ["@nrwl/nx", "@typescript-eslint/eslint-plugin", "unused-imports", "import", "jest"],
+    "plugins": ["@typescript-eslint/eslint-plugin", "unused-imports", "import", "jest"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 12,
@@ -49,24 +49,6 @@ module.exports = {
         }
     },
     "overrides": [
-        {
-            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-            "rules": {
-                "@nrwl/nx/enforce-module-boundaries": [
-                    "error",
-                    {
-                        "enforceBuildableLibDependency": true,
-                        "allow": [],
-                        "depConstraints": [
-                            {
-                                "sourceTag": "*",
-                                "onlyDependOnLibsWithTags": ["*"]
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
         // Configuration for test files
         {
             "files": ["test/**/*.ts"],
@@ -77,7 +59,6 @@ module.exports = {
         {
             "files": ["*.ts", "*.tsx"],
             "extends": [
-                "plugin:@nrwl/nx/typescript",
                 "eslint:recommended",
                 "plugin:node/recommended",
                 "plugin:prettier/recommended",

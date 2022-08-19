@@ -9,10 +9,6 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, helmet_1.default)());
 app.use('/', routes_1.default);
-// catch 404 and forward to error handler
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//   next(createError(404));
-// });
 app.listen(3000, () => {
     console.log('Server running!');
 });
