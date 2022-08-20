@@ -1,3 +1,5 @@
+import {DBMovie} from "../../models/DBMovie";
+
 export interface GenresRepository {
-    all(): Promise<string[]>;
+    all(): Promise<DBMovie['genres']>; // decouple
 }
