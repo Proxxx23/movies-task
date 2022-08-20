@@ -2,8 +2,8 @@ import {DBMovie} from "../../models/DBMovie";
 import {Movie} from "../../models/Movie";
 
 export interface MoviesRepository {
-    addMovie(movie: Movie): void, // write model
-    find(genresList?: string[], duration?: number): DBMovie[], // read model
-    fetchRandom(): DBMovie, // read model
-    genres(): string[];
+    add(movie: Movie): Promise<void>, // write model
+    find(genresList?: string[], duration?: number): Promise<DBMovie[]>, // read model
+    fetchRandom(): Promise<DBMovie>, // read model
+    genres(): Promise<string[]>; // todo: genres repository
 }

@@ -1,3 +1,4 @@
+import fsPromised from "fs/promises";
 import fs from "fs";
 import {MoviesRepository} from "../../application/jsondb/repository";
 import {Movie} from "../../models/Movie";
@@ -10,13 +11,14 @@ type DBTable = {
     movies: DBMovie[],
 }
 
-export const createMoviesRepository = (): MoviesRepository => articleRepository(connection());
+export const createMoviesRepository = async (): Promise<MoviesRepository> => articleRepository(await connection());
 
 function articleRepository(db: DBTable): MoviesRepository {
-    function addMovie(movie: Movie): void {
-        movie.id = getIncrementedId();
+    async function add(movie: Movie): Promise<void> {
+        movie.id = await getIncrementedId();
         db.movies[movie.id] = movie;
 
+        // todo: async?
         fs.writeFileSync(__dirname + DB_PATH, JSON.stringify(
             {
                 genres: db.genres,
@@ -25,16 +27,16 @@ function articleRepository(db: DBTable): MoviesRepository {
         ));
     }
 
-    function fetchRandom(): DBMovie {
+    async function fetchRandom(): Promise<DBMovie> {
         return db.movies[Math.floor((Math.random() * db.movies.length))];
     }
 
-    function find(genresList?: string[], duration?: number): DBMovie[] {
+    async function find(genresList?: string[], duration?: number): Promise<DBMovie[]> {
         if (genresList) {
             db.movies.forEach((movie) => {
                 const hasNoMatchingGenres = movie.genres.filter((genre) => genresList.includes(genre)) === [];
                 if (hasNoMatchingGenres) {
-                    delete movie;
+                    return;
                 }
             });
         }
@@ -46,30 +48,32 @@ function articleRepository(db: DBTable): MoviesRepository {
         return db.movies;
     }
 
-    function genres(): DBMovie['genres'] {
+    async function genres(): Promise<DBMovie['genres']> {
         return db.genres;
     }
 
-    function getIncrementedId(): number {
+    async function getIncrementedId(): Promise<number> {
         let lastId =  db.movies[db.movies.length-1].id;
 
         return ++lastId;
     }
 
     return {
-        addMovie,
+        add,
         find,
         fetchRandom,
         genres,
     };
 }
 
-function connection(): DBTable {
-    let db: string;
+// todo: standalone infra, decouple from repo
+const connection = async (): Promise<DBTable> => {
     try {
-        db = fs.readFileSync(__dirname + DB_PATH, {encoding: 'utf8'});
-        return JSON.parse(db);
+        const data = await fsPromised.readFile(__dirname + DB_PATH, {encoding: 'utf8'});
+        const buff = Buffer.from(data);
+
+        return JSON.parse(buff.toString()) as DBTable;
     } catch (err) {
-        throw new Error('Could not connect to DB. ' + err);
+        //
     }
 }

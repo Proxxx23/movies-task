@@ -2,15 +2,16 @@ import {Request, Response} from "express";
 import {createMoviesRepository} from "../infrastructure/jsondb/repository";
 import {Movie} from "../models/Movie";
 import {StatusCodes} from "http-status-codes";
+import {DBMovie} from "../models/DBMovie";
 
 interface SearchQueryParams {
     genres?: string[],
     duration?: number,
 }
 
-export const add = (req: Request<{}, {}, Movie>, res: Response): Response => {
-    const repository = createMoviesRepository();
-    const validGenres = repository.genres();
+export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<Response<string>> => {
+    const repository = await createMoviesRepository();
+    const validGenres = await repository.genres();
     const genres = req.body.genres;
 
     const allGenresValid = genres.every((genre) => validGenres.includes(genre));
@@ -32,7 +33,7 @@ export const add = (req: Request<{}, {}, Movie>, res: Response): Response => {
     }
 
     try {
-        repository.addMovie(movie)
+        await repository.add(movie)
     } catch (err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added!');
     }
@@ -40,14 +41,14 @@ export const add = (req: Request<{}, {}, Movie>, res: Response): Response => {
     return res.send('Movie added successfully!');
 }
 
-export const search = (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Response => {
-    const repository = createMoviesRepository();
+export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Promise<Response<DBMovie[] | string>> => {
+    const repository = await createMoviesRepository();
 
     if (!req.query.genres && !req.query.duration) {
-        return res.send(repository.fetchRandom());
+        return res.send(await repository.fetchRandom());
     }
 
-    const validGenres = repository.genres();
+    const validGenres = await repository.genres();
     const genres = req.query.genres;
 
     const allGenresValid = genres?.every((genre) => validGenres.includes(genre));
