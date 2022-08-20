@@ -5,5 +5,4 @@ export interface MoviesRepository {
     add(movie: Movie): Promise<void>, // write model
     find(genresList?: string[], duration?: number): Promise<DBMovie[]>, // read model
     fetchRandom(): Promise<DBMovie>, // read model
-    genres(): Promise<string[]>; // todo: genres repository
 }

@@ -1,8 +1,9 @@
 import {Request, Response} from "express";
-import {createMoviesRepository} from "../infrastructure/jsondb/repository";
+import {createMoviesRepository} from "../infrastructure/jsondb/moviesRepository";
 import {Movie} from "../models/Movie";
 import {StatusCodes} from "http-status-codes";
 import {DBMovie} from "../models/DBMovie";
+import {createGenresRepository} from "../infrastructure/jsondb/genresRepository";
 
 interface SearchQueryParams {
     genres?: string[],
@@ -10,8 +11,9 @@ interface SearchQueryParams {
 }
 
 export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<Response<string>> => {
-    const repository = await createMoviesRepository();
-    const validGenres = await repository.genres();
+    const moviesRepository = await createMoviesRepository();
+    const genresRepository = await createGenresRepository();
+    const validGenres = await genresRepository.all();
     const genres = req.body.genres;
 
     const allGenresValid = genres.every((genre) => validGenres.includes(genre));
@@ -33,7 +35,7 @@ export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<R
     }
 
     try {
-        await repository.add(movie)
+        await moviesRepository.add(movie)
     } catch (err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added!');
     }
@@ -42,13 +44,14 @@ export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<R
 }
 
 export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Promise<Response<DBMovie[] | string>> => {
-    const repository = await createMoviesRepository();
+    const moviesRepository = await createMoviesRepository();
+    const genresRepository = await createGenresRepository();
 
     if (!req.query.genres && !req.query.duration) {
-        return res.send(await repository.fetchRandom());
+        return res.send(await moviesRepository.fetchRandom());
     }
 
-    const validGenres = await repository.genres();
+    const validGenres = await genresRepository.all();
     const genres = req.query.genres;
 
     const allGenresValid = genres?.every((genre) => validGenres.includes(genre));

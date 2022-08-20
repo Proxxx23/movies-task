@@ -1,24 +1,17 @@
-import fsPromised from "fs/promises";
 import fs from "fs";
-import {MoviesRepository} from "../../application/jsondb/repository";
+import {MoviesRepository} from "../../application/jsondb/moviesRepository";
 import {Movie} from "../../models/Movie";
 import {DBMovie} from "../../models/DBMovie";
+import {connection, DB_PATH, DBTable} from "./db";
 
-const DB_PATH = '/../../db/db.json'; // fixme: ???
+export const createMoviesRepository = async (): Promise<MoviesRepository> => moviesRepository(await connection());
 
-type DBTable = {
-    genres: string[],
-    movies: DBMovie[],
-}
-
-export const createMoviesRepository = async (): Promise<MoviesRepository> => articleRepository(await connection());
-
-function articleRepository(db: DBTable): MoviesRepository {
+function moviesRepository(db: DBTable): MoviesRepository {
     async function add(movie: Movie): Promise<void> {
         movie.id = await getIncrementedId();
         db.movies[movie.id] = movie;
 
-        // todo: async?
+        // todo: async
         fs.writeFileSync(__dirname + DB_PATH, JSON.stringify(
             {
                 genres: db.genres,
@@ -48,10 +41,6 @@ function articleRepository(db: DBTable): MoviesRepository {
         return db.movies;
     }
 
-    async function genres(): Promise<DBMovie['genres']> {
-        return db.genres;
-    }
-
     async function getIncrementedId(): Promise<number> {
         let lastId =  db.movies[db.movies.length-1].id;
 
@@ -62,18 +51,5 @@ function articleRepository(db: DBTable): MoviesRepository {
         add,
         find,
         fetchRandom,
-        genres,
     };
-}
-
-// todo: standalone infra, decouple from repo
-const connection = async (): Promise<DBTable> => {
-    try {
-        const data = await fsPromised.readFile(__dirname + DB_PATH, {encoding: 'utf8'});
-        const buff = Buffer.from(data);
-
-        return JSON.parse(buff.toString()) as DBTable;
-    } catch (err) {
-        //
-    }
 }
