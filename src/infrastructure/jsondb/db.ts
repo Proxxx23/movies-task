@@ -15,6 +15,14 @@ export const connection = async (): Promise<DBTable> => {
 
         return JSON.parse(buff.toString()) as DBTable;
     } catch (err) {
-        //
+        // todo: ??? Log or allow to throw 500?
     }
+}
+
+export const lastInsertedId = async (): Promise<number> => {
+    const db = await connection();
+
+    let lastId = db.movies[db.movies.length-1].id;
+
+    return ++lastId;
 }

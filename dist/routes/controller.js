@@ -1,11 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.search = exports.add = void 0;
-const repository_1 = require("../infrastructure/jsondb/repository");
+const tslib_1 = require("tslib");
+const moviesRepository_1 = require("../infrastructure/jsondb/moviesRepository");
 const http_status_codes_1 = require("http-status-codes");
-const add = (req, res) => {
-    const repository = (0, repository_1.createMoviesRepository)();
-    const validGenres = repository.genres();
+const genresRepository_1 = require("../infrastructure/jsondb/genresRepository");
+const movieService_1 = require("../services/movieService");
+const add = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+    const moviesRepository = yield (0, moviesRepository_1.createMoviesRepository)();
+    const genresRepository = yield (0, genresRepository_1.createGenresRepository)();
+    const validGenres = yield genresRepository.all();
     const genres = req.body.genres;
     const allGenresValid = genres.every((genre) => validGenres.includes(genre));
     if (!allGenresValid) {
@@ -24,26 +28,29 @@ const add = (req, res) => {
         posterUrl: req.body.posterUrl || null,
     };
     try {
-        repository.add(movie);
+        yield moviesRepository.add(movie);
     }
     catch (err) {
         return res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added!');
     }
     return res.send('Movie added successfully!');
-};
+});
 exports.add = add;
-const search = (req, res) => {
-    const repository = (0, repository_1.createMoviesRepository)();
+const search = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+    const moviesRepository = yield (0, moviesRepository_1.createMoviesRepository)();
+    const genresRepository = yield (0, genresRepository_1.createGenresRepository)();
+    const moviesService = new movieService_1.MovieService(moviesRepository);
     if (!req.query.genres && !req.query.duration) {
-        return res.send(repository.fetchRandom());
+        return res.send(yield moviesService.getRandomMovie());
     }
-    const validGenres = repository.genres();
+    const validGenres = yield genresRepository.all();
     const genres = req.query.genres;
     const allGenresValid = genres === null || genres === void 0 ? void 0 : genres.every((genre) => validGenres.includes(genre));
     if (!allGenresValid) {
         return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
+    // service
     return res.send('a');
-};
+});
 exports.search = search;
 //# sourceMappingURL=controller.js.map
