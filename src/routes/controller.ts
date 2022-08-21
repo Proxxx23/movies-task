@@ -22,6 +22,7 @@ export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<R
         return res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
 
+    // todo???: May be put in a factory createFromRequest() method
     const movie: Movie = {
         id: 0,
         title: req.body.title,

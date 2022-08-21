@@ -15,7 +15,8 @@ export const connection = async (): Promise<DBTable> => {
 
         return JSON.parse(buff.toString()) as DBTable;
     } catch (err) {
-        // todo: ??? Log or allow to throw 500?
+        // fixme doesn't work!!!
+        throw new Error('Could not connect to database.');
     }
 }
 
