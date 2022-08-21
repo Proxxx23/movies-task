@@ -54,9 +54,8 @@ export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: R
     }
 
     const validGenres = await genresRepository.all();
-    const genres = req.query.genres;
 
-    const allGenresValid = genres?.every((genre) => validGenres.includes(genre));
+    const allGenresValid = req.query.genres?.every((genre) => validGenres.includes(genre));
     if (!allGenresValid) {
         return res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }

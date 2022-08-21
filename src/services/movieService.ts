@@ -22,6 +22,11 @@ export class MovieService {
 
         movies.forEach((movie) => {
             if (genresList) {
+                if (movie.genres === []) {
+                    // todo: test if below won't be sufficient
+                    return; // no genres at all
+                }
+
                 const hasNoMatchingGenres = movie.genres.filter((genre) => genresList.includes(genre)) === [];
                 if (hasNoMatchingGenres) {
                     return;
@@ -38,10 +43,10 @@ export class MovieService {
                 }
             }
 
-            // doesn't work
-            if (movie.runtime > duration - 10 && movie.runtime < duration + 10) {
-                const index = filtered.findIndex((item: Movie) => item.id === movie.id);
-                if (index > -1) {
+
+            if (+movie.runtime < duration - 10 || +movie.runtime > +duration + 10) {
+                const index = filtered.findIndex((item: Movie) => item.id === movie.id); // index to remove
+                if (index > -1) { // found index
                     filtered.splice(index, 1);
                 }
             }
