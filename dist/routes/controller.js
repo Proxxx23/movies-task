@@ -37,6 +37,7 @@ const add = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* ()
 });
 exports.add = add;
 const search = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const moviesRepository = yield (0, moviesRepository_1.createMoviesRepository)();
     const genresRepository = yield (0, genresRepository_1.createGenresRepository)();
     const moviesService = new movieService_1.MovieService(moviesRepository);
@@ -44,13 +45,11 @@ const search = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function*
         return res.send(yield moviesService.getRandomMovie());
     }
     const validGenres = yield genresRepository.all();
-    const genres = req.query.genres;
-    const allGenresValid = genres === null || genres === void 0 ? void 0 : genres.every((genre) => validGenres.includes(genre));
+    const allGenresValid = (_a = req.query.genres) === null || _a === void 0 ? void 0 : _a.every((genre) => validGenres.includes(genre));
     if (!allGenresValid) {
         return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
-    // service
-    return res.send('a');
+    return res.send(yield moviesService.find(req.query.genres, req.query.duration));
 });
 exports.search = search;
 //# sourceMappingURL=controller.js.map

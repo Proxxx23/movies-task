@@ -11,7 +11,7 @@ const connection = () => tslib_1.__awaiter(void 0, void 0, void 0, function* () 
         return JSON.parse(buff.toString());
     }
     catch (err) {
-        //
+        // todo: ??? Log or allow to throw 500?
     }
 });
 exports.connection = connection;

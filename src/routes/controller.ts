@@ -49,8 +49,8 @@ export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: R
     const genresRepository = await createGenresRepository();
     const moviesService = new MovieService(moviesRepository);
 
-    if (!req.query.genres && !req.query.duration) {
-        return res.send(await moviesService.getRandomMovie());
+    if (!req.query.genres) {
+        return res.send(await moviesService.getRandomMovie(req.query.duration));
     }
 
     const validGenres = await genresRepository.all();

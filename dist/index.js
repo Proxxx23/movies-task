@@ -12,4 +12,5 @@ app.use('/', routes_1.default);
 app.listen(3000, () => {
     console.log('Server running!');
 });
+exports.default = app;
 //# sourceMappingURL=index.js.map

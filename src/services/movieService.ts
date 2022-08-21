@@ -2,60 +2,68 @@ import {MoviesRepository} from "../application/jsondb/moviesRepository";
 import {DBMovie} from "../models/DBMovie";
 import {Movie} from "../models/Movie";
 
-type MoviesWithCounter = (Movie & {
-    matchingGenresCount: number
-})[];
+const RandomMovie = (movies: Movie[]): Movie => movies[Math.floor((Math.random() * movies.length))];
 
 export class MovieService {
-    constructor(private readonly moviesRepository: MoviesRepository) { }
+    constructor(private readonly moviesRepository: MoviesRepository) {
+    }
 
-    public async getRandomMovie(): Promise<DBMovie> {
+    public async getRandomMovie(duration?: number): Promise<DBMovie> {
         const movies = await this.moviesRepository.all();
 
-        return movies[Math.floor((Math.random() * movies.length))];
+        if (duration) {
+            const moviesWithinDuration = movies.filter((movie) => +movie.runtime > duration - 10 && +movie.runtime < +duration + 10);
+
+            return RandomMovie(moviesWithinDuration);
+        }
+
+        return RandomMovie(movies);
     }
 
     public async find(genresList?: string[], duration?: number): Promise<DBMovie[]> {
-        let movies = await this.moviesRepository.all();
+        const movies = await this.moviesRepository.all();
 
-        const filtered: MoviesWithCounter = [];
+        if (!genresList && !duration) {
+            return movies;
+        }
 
-        movies.forEach((movie) => {
-            if (genresList) {
-                if (movie.genres === []) {
-                    // todo: test if below won't be sufficient
-                    return; // no genres at all
-                }
-
-                const hasNoMatchingGenres = movie.genres.filter((genre) => genresList.includes(genre)) === [];
-                if (hasNoMatchingGenres) {
-                    return;
-                }
-
+        const filteredMovies = movies
+            .map(movie => {
                 const matchingGenresCount = movie.genres.filter((genre) => genresList.includes(genre)).length;
-                if (matchingGenresCount > 0) {
-                    filtered.push(
-                        {
-                            ...movie,
-                            matchingGenresCount
-                        }
-                    );
-                }
-            }
+                const withinDurationLimit = !duration
+                    ? true
+                    : +movie.runtime > duration - 10 && +movie.runtime < +duration + 10;
 
-
-            if (+movie.runtime < duration - 10 || +movie.runtime > +duration + 10) {
-                const index = filtered.findIndex((item: Movie) => item.id === movie.id); // index to remove
-                if (index > -1) { // found index
-                    filtered.splice(index, 1);
+                if (matchingGenresCount > 0 && withinDurationLimit) {
+                    return {
+                        ...movie,
+                    }
                 }
-            }
+                }
+            )
+            .filter((movie) => movie !== undefined);
+
+        this.sortByMatchingGenres(filteredMovies, genresList);
+
+        return this.retrieveUniqueMovies(filteredMovies);
+    }
+
+    sortByMatchingGenres(movies: Movie[], genresList: string[]) {
+        movies.sort((movie1, movie2) => {
+            const m1 = movie1.genres.filter((genre) => genresList.includes(genre)).length;
+            const m2 = movie2.genres.filter((genre) => genresList.includes(genre)).length;
+
+            return m2 - m1;
         });
+    }
 
-        filtered.sort((movie1, movie2) => movie2.matchingGenresCount - movie1.matchingGenresCount);
+    retrieveUniqueMovies(movies: Movie[]): Movie[] {
+        const map = new Map();
 
-        movies = filtered;
+        for (const movie of movies) {
+            map.set(movie.title, movie);
+        }
 
-        return movies;
+        return [...map.values()];
     }
 }

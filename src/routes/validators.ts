@@ -85,7 +85,7 @@ export const validateAddMovieRequest = [
         },
     ];
 
-export const validateSearchRequest = [
+export const validateSearchMovieRequest = [
     query('duration')
         .optional()
         .isNumeric()
