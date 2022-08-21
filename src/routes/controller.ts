@@ -22,7 +22,6 @@ export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<R
         return res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
 
-    // todo: may be put in a factory, but factory will be coupled tightly with a framework (needs Request typing)
     const movie: Movie = {
         id: 0,
         title: req.body.title,
@@ -53,9 +52,9 @@ export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: R
         return res.send(await moviesService.getRandomMovie(req.query.duration));
     }
 
-    const validGenres = await genresRepository.all();
+    const allowedGenres = await genresRepository.all();
 
-    const allGenresValid = req.query.genres?.every((genre) => validGenres.includes(genre));
+    const allGenresValid = req.query.genres.every((genre) => allowedGenres.includes(genre));
     if (!allGenresValid) {
         return res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
