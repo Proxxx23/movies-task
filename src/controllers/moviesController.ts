@@ -5,7 +5,8 @@ import {MovieService} from "../services/movieService";
 import {Movie} from "../models/Movie";
 import {StatusCodes} from "http-status-codes";
 import {DBMovie} from "../models/DBMovie";
-import {connection, MoviesDB} from "../infrastructure/jsondb/db";
+import {MoviesRepository} from "../application/jsondb/moviesRepository";
+import {GenresRepository} from "../application/jsondb/genresRepository";
 
 interface SearchQueryParams {
     genres?: string[],
@@ -24,15 +25,15 @@ export interface MovieRequest {
 }
 
 export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Promise<Response<Movie[] | string>> => {
-    let db: MoviesDB;
+    let moviesRepository: MoviesRepository;
+    let genresRepository: GenresRepository;
     try {
-        db = await connection();
+        moviesRepository = await createMoviesRepository();
+        genresRepository = await createGenresRepository();
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not connect to database!');
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not connect to a database!');
     }
 
-    const moviesRepository = await createMoviesRepository(db);
-    const genresRepository = await createGenresRepository(db);
     const validGenres = await genresRepository.all();
     const genres = req.body.genres;
 
@@ -68,15 +69,15 @@ export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Pr
 }
 
 export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Promise<Response<DBMovie[] | string>> => {
-    let db: MoviesDB;
+    let moviesRepository: MoviesRepository;
+    let genresRepository: GenresRepository;
     try {
-        db = await connection();
+        moviesRepository = await createMoviesRepository();
+        genresRepository = await createGenresRepository();
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not connect to database!');
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not connect to a database!');
     }
 
-    const moviesRepository = await createMoviesRepository(db);
-    const genresRepository = await createGenresRepository(db);
     const moviesService = new MovieService(moviesRepository);
 
     const genres = Array.isArray(req.query.genres) ? req.query.genres : [req.query.genres];

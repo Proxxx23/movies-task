@@ -61,7 +61,7 @@ describe('Endpoint to add a movie', () => {
             }
         );
 
-        const moviesRepository = await createMoviesRepository(await connection());
+        const moviesRepository = await createMoviesRepository();
         const movies = await moviesRepository.all();
 
         const addedMovie = movies[movies.length - 1];
