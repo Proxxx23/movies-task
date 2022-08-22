@@ -1,5 +1,5 @@
-import {MoviesDB} from "../../infrastructure/jsondb/db";
+import {Genre} from "../../infrastructure/jsondb/db";
 
 export interface GenresRepository {
-    all(): Promise<MoviesDB['genres']>;
+    all(): Promise<Genre[]>;
 }

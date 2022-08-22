@@ -89,6 +89,7 @@ export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: R
         );
     }
 
+    // todo: put in a validator
     const allowedGenres = await genresRepository.all();
 
     const allGenresValid = genres.every((genre) => allowedGenres.includes(genre));
