@@ -1,5 +1,5 @@
-import {DBMovie} from "../../models/DBMovie";
+import {MoviesDB} from "../../infrastructure/jsondb/db";
 
 export interface GenresRepository {
-    all(): Promise<DBMovie['genres']>; // fixme: decouple
+    all(): Promise<MoviesDB['genres']>;
 }

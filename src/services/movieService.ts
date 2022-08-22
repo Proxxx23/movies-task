@@ -3,6 +3,7 @@ import {DBMovie} from "../models/DBMovie";
 import {Movie} from "../models/Movie";
 
 const RandomMovie = (movies: Movie[]): Movie => movies[Math.floor((Math.random() * movies.length))];
+const isWithinValidDuration = (movieRuntime: number, duration: number): boolean => movieRuntime > duration - 10 && movieRuntime < +duration + 10;
 
 export class MovieService {
     constructor(private readonly moviesRepository: MoviesRepository) {
@@ -12,7 +13,7 @@ export class MovieService {
         const movies = await this.moviesRepository.all();
 
         if (duration) {
-            const moviesWithinDuration = movies.filter((movie) => +movie.runtime > duration - 10 && +movie.runtime < +duration + 10);
+            const moviesWithinDuration = movies.filter((movie) => isWithinValidDuration(+movie.runtime, duration));
 
             return RandomMovie(moviesWithinDuration);
         }
@@ -32,7 +33,7 @@ export class MovieService {
                 const matchingGenresCount = movie.genres.filter((genre) => genresList.includes(genre)).length;
                 const withinDurationLimit = !duration
                     ? true
-                    : +movie.runtime > duration - 10 && +movie.runtime < +duration + 10;
+                    : isWithinValidDuration(+movie.runtime, duration);
 
                 if (matchingGenresCount > 0 && withinDurationLimit) {
                     return {

@@ -3,17 +3,17 @@ import {DBMovie} from "../../models/DBMovie";
 
 export const DB_PATH = '/../../db/db.json'; // fixme: ???
 
-export type DBTable = {
+export type MoviesDB = {
     genres: string[],
     movies: DBMovie[],
 }
 
-export const connection = async (): Promise<DBTable> => {
+export const connection = async (): Promise<MoviesDB> => {
     try {
         const data = await fsPromised.readFile(__dirname + DB_PATH, {encoding: 'utf8'});
         const buff = Buffer.from(data);
 
-        return JSON.parse(buff.toString()) as DBTable;
+        return JSON.parse(buff.toString()) as MoviesDB;
     } catch (err) {
         // fixme doesn't work!!!
         throw new Error('Could not connect to database.');
