@@ -12,7 +12,18 @@ interface SearchQueryParams {
     duration?: number,
 }
 
-export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<Response<string>> => {
+export interface MovieRequest {
+    title: string;
+    year: number;
+    runtime: number;
+    director: string;
+    genres: string[];
+    actors: string | null;
+    plot: string | null;
+    posterUrl: string | null;
+}
+
+export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Promise<Response<Movie[] | string>> => {
     let db: MoviesDB;
     try {
         db = await connection();
@@ -27,7 +38,7 @@ export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<R
 
     const allGenresValid = genres.every((genre) => validGenres.includes(genre));
     if (!allGenresValid) {
-        return res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
+        return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send('Invalid genre on a list!');
     }
 
     // todo???: May be put in a factory createFromRequest() method
@@ -49,7 +60,11 @@ export const add = async (req: Request<{}, {}, Movie>, res: Response): Promise<R
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added!');
     }
 
-    return res.send('Movie added successfully!');
+    return res.send(
+        {
+            data: movie
+        }
+    );
 }
 
 export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Promise<Response<DBMovie[] | string>> => {
@@ -64,16 +79,25 @@ export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: R
     const genresRepository = await createGenresRepository(db);
     const moviesService = new MovieService(moviesRepository);
 
-    if (!req.query.genres) {
-        return res.send(await moviesService.getRandomMovie(req.query.duration));
+    const genres = Array.isArray(req.query.genres) ? req.query.genres : [req.query.genres];
+    if (!req.query.genres || genres.length === 0) {
+        return res.send(
+            {
+                data: await moviesService.getRandomMovie(req.query.duration)
+            }
+        );
     }
 
     const allowedGenres = await genresRepository.all();
 
-    const allGenresValid = req.query.genres.every((genre) => allowedGenres.includes(genre));
+    const allGenresValid = genres.every((genre) => allowedGenres.includes(genre));
     if (!allGenresValid) {
         return res.status(StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
 
-    return res.send(await moviesService.find(req.query.genres, req.query.duration));
+    return res.send(
+        {
+            data: await moviesService.find(genres, req.query.duration)
+        }
+    );
 }

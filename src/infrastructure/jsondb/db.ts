@@ -1,8 +1,12 @@
 import fsPromised from "fs/promises";
 import {DBMovie} from "../../models/DBMovie";
 
-export const PROD_DB_PATH = '/../../db/db.json';
-export const TEST_DB_PATH = '/../../db/db-test.json';
+export const PROD_DB_NAME = 'db.json';
+export const ORIG_DB_NAME = 'db-orig.json';
+export const TEST_DB_NAME = 'db-test.json';
+
+export const PROD_DB_PATH = '/../../db/' + PROD_DB_NAME;
+export const TEST_DB_PATH = '/../../db/' + TEST_DB_NAME;
 
 export type MoviesDB = {
     genres: string[],

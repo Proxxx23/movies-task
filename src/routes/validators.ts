@@ -1,4 +1,4 @@
-import {body, query, validationResult} from "express-validator";
+import {body, query, validationResult, CustomValidator} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 import {StatusCodes} from "http-status-codes";
 
@@ -94,10 +94,14 @@ export const validateSearchMovieRequest = [
 
     query('genres')
         .optional()
-        .not()
-        .isEmpty()
-        .isArray()
-        .withMessage('Genres must be specified as an non-empty array!')
+        .custom((value, {req}) => {
+            if (typeof req.query.genres === 'string' && req.query.genres.trim().includes(',')) {
+                return false;
+            }
+
+            return (Array.isArray(req.query.genres) || typeof req.query.genres === 'string') && req.query.genres.length > 0;
+        })
+        .withMessage('Genres must be specified as an non-empty array or single string value!')
         .bail(),
 
     (req: Request, res: Response, next: NextFunction) => {

@@ -86,8 +86,13 @@ exports.validateSearchMovieRequest = [
     (0, express_validator_1.query)('genres')
         .optional()
         .not()
-        .isEmpty()
-        .isArray()
+        .custom((value, { req }) => {
+        if ((Array.isArray(req.query.genres || typeof req.query.genres === 'string')) && req.query.genres.length > 0) {
+            console.log(req.query.genres.length);
+            return true;
+        }
+        throw new Error('Fuck you');
+    })
         .withMessage('Genres must be specified as an non-empty array!')
         .bail(),
     (req, res, next) => {
