@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import routes from "./routes";
+import routes from "./routes/movies";
 
 export const createTestServer = () => {
     const app = express();

@@ -43,7 +43,7 @@ export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Pr
 
     // todo???: May be put in a factory createFromRequest() method
     const movie: Movie = {
-        id: 0,
+        id: null, // to be set by a DB
         title: req.body.title,
         year: req.body.year,
         runtime: req.body.runtime,

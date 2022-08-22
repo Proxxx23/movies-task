@@ -1,6 +1,6 @@
 // write model
 export interface Movie {
-    id: number;
+    id: number | null;
     title: string;
     year: number;
     runtime: number;

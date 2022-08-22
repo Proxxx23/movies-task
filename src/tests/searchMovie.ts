@@ -48,25 +48,30 @@ describe('Tests for endpoint to search a movie', () => {
     });
 
     it('responds with a movies for only array of genres query param specified', async () => {
+        const genres = [
+            'Comedy',
+            'Adventure',
+            'Animation'
+        ];
+
         const response = await request(app)
             .get('/search')
             .query(
                 {
-                    genres: [
-                        'Comedy',
-                        'Adventure',
-                        'Animation'
-                    ]
+                    genres
                 }
             )
             .send();
 
         const data = response.body.data;
 
+        const lastMovieOnAList = data[data.length - 1];
+        const lastMovieMatchingGenresCount = lastMovieOnAList.genres.filter((genre) => genres.includes(genre)).length;
+
         expect(response.status).toBe(StatusCodes.OK);
         expect(data.length).toBeGreaterThan(0); // theoretically this can be 0 if DB will be empty or duration assumption will fail
         expect(data[0].genres.length).toBe(3); // We assume we have movie with 3 genres that we've specified
-        expect(data[data.length - 1].genres.length).toBe(1); // We assume last movie has only one genre from given three
+        expect(lastMovieMatchingGenresCount).toBe(1); // We assume last movie has only one genre from given three
     });
 
     it('responds with a movies for array of genres and duration query params specified', async () => {

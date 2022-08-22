@@ -1,5 +1,5 @@
 import express from "express";
-import {add, search} from "./controller";
+import {add, search} from "../controllers/moviesController";
 import {validateAddMovieRequest, validateSearchMovieRequest} from "./validators";
 
 const router = express.Router();
