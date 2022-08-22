@@ -5,12 +5,12 @@ const dotenv = tslib_1.__importStar(require("dotenv"));
 dotenv.config();
 const helmet_1 = tslib_1.__importDefault(require("helmet"));
 const express_1 = tslib_1.__importDefault(require("express"));
-const routes_1 = tslib_1.__importDefault(require("./routes"));
+const movies_1 = tslib_1.__importDefault(require("./routes/movies"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, helmet_1.default)());
-app.use('/', routes_1.default);
+app.use('/', movies_1.default);
 app.listen(3000, () => {
     console.log('Server running!');
 });

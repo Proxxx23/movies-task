@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MovieService = void 0;
+exports.MoviesService = void 0;
 const tslib_1 = require("tslib");
 const randomMovie = (movies) => movies[Math.floor((Math.random() * movies.length))];
 const isWithinValidDuration = (movieRuntime, duration) => movieRuntime >= duration - 10 && movieRuntime <= +duration + 10;
-class MovieService {
+class MoviesService {
     constructor(moviesRepository) {
         this.moviesRepository = moviesRepository;
     }
@@ -51,5 +51,5 @@ class MovieService {
         return [...map.values()];
     }
 }
-exports.MovieService = MovieService;
-//# sourceMappingURL=movieService.js.map
+exports.MoviesService = MoviesService;
+//# sourceMappingURL=moviesService.js.map

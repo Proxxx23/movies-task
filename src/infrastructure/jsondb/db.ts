@@ -1,6 +1,5 @@
-import fsPromised from "fs/promises";
+import promisedFs from "fs/promises";
 import {DBMovie} from "../../models/DBMovie";
-import fs from "fs/promises";
 import {Movie} from "../../models/Movie";
 
 export const PROD_DB_NAME = 'db.json';
@@ -19,11 +18,15 @@ export type MoviesTable = {
 }
 
 // In real DB this connection will be open and shared but let's leave it for now
-export const connection = async (): Promise<MoviesTable> => {
-    const data = await fsPromised.readFile(await dbPath(), {encoding: 'utf8'});
+const connection = async (): Promise<MoviesTable> => {
+    const data = await promisedFs.readFile(await dbPath(), {encoding: 'utf8'});
     const buffer = Buffer.from(data);
 
     return JSON.parse(buffer.toString()) as MoviesTable;
+}
+
+export const all = async (): Promise<MoviesTable> => {
+    return await connection();
 }
 
 export const persist = async (movie: Movie): Promise<number> => {
@@ -32,12 +35,12 @@ export const persist = async (movie: Movie): Promise<number> => {
     movie.id = await lastInsertedId();
     db.movies[movie.id] = movie;
 
-    const moviesDB: MoviesTable = {
+    const moviesTable: MoviesTable = {
         genres: db.genres,
         movies: db.movies.filter((x) => x !== null && x !== undefined)
     };
 
-    await fs.writeFile(await dbPath(), JSON.stringify(moviesDB));
+    await promisedFs.writeFile(await dbPath(), JSON.stringify(moviesTable));
 
     return await lastInsertedId();
 }
@@ -45,9 +48,7 @@ export const persist = async (movie: Movie): Promise<number> => {
 export const lastInsertedId = async (): Promise<number> => {
     const db = await connection();
 
-    let lastId = db.movies[db.movies.length - 1].id;
-
-    return ++lastId;
+    return ++db.movies[db.movies.length - 1].id;
 }
 
 const dbPath = async (): Promise<string> => {
@@ -61,7 +62,13 @@ const dbPath = async (): Promise<string> => {
             path = TEST_DB_PATH;
             break;
         default:
-            throw new Error('Invalid NODE_ENV value!');
+            throw new Error('Could not connect to a database: invalid environment');
+    }
+
+    try {
+        await promisedFs.access(__dirname + path);
+    } catch (err) {
+        throw new Error('Could not connect to a database: no database found');
     }
 
     return __dirname + path;

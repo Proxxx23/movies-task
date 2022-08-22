@@ -85,15 +85,14 @@ exports.validateSearchMovieRequest = [
         .bail(),
     (0, express_validator_1.query)('genres')
         .optional()
-        .not()
+        .bail()
         .custom((value, { req }) => {
-        if ((Array.isArray(req.query.genres || typeof req.query.genres === 'string')) && req.query.genres.length > 0) {
-            console.log(req.query.genres.length);
-            return true;
+        if (typeof req.query.genres === 'string' && req.query.genres.trim().includes(',')) {
+            return false;
         }
-        throw new Error('Fuck you');
+        return (Array.isArray(req.query.genres) || typeof req.query.genres === 'string') && req.query.genres.length > 0;
     })
-        .withMessage('Genres must be specified as an non-empty array!')
+        .withMessage('Genres must be specified as an non-empty array or single string value!')
         .bail(),
     (req, res, next) => {
         const errors = (0, express_validator_1.validationResult)(req);

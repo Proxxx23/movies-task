@@ -1,14 +1,15 @@
 import {MoviesRepository} from "../../application/jsondb/moviesRepository";
 import {Movie} from "../../models/Movie";
 import {DBMovie} from "../../models/DBMovie";
-import {connection, MoviesTable, persist} from "./db";
+import {persist, all} from "./db";
 
-export const createMoviesRepository = async (): Promise<MoviesRepository> => moviesRepository(await connection());
+export const createMoviesRepository = async (): Promise<MoviesRepository> => moviesRepository();
 
-function moviesRepository(db: MoviesTable): MoviesRepository {
-    async function all(): Promise<DBMovie[]> {
-        // todo: like persist, something like all() in DB
-        return db.movies;
+function moviesRepository(): MoviesRepository {
+    async function fetchAll(): Promise<DBMovie[]> {
+        const allRecords = await all();
+
+        return allRecords.movies;
     }
 
     async function add(movie: Movie): Promise<void> {
@@ -16,7 +17,7 @@ function moviesRepository(db: MoviesTable): MoviesRepository {
     }
 
     return {
-        all,
+        fetchAll,
         add,
     };
 }

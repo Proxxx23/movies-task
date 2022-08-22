@@ -3,26 +3,26 @@ import {DBMovie} from "../models/DBMovie";
 import {Movie} from "../models/Movie";
 
 const randomMovie = (movies: Movie[]): Movie => movies[Math.floor((Math.random() * movies.length))];
-const isWithinValidDuration = (movieRuntime: number, duration: number): boolean => movieRuntime > duration - 10 && movieRuntime < +duration + 10;
+const isWithinValidDuration = (movieRuntime: number, duration: number): boolean => movieRuntime >= duration - 10 && movieRuntime <= +duration + 10;
 
-export class MovieService {
+export class MoviesService {
     constructor(private readonly moviesRepository: MoviesRepository) {
     }
 
     public async getRandomMovie(duration?: number): Promise<DBMovie> {
-        const movies = await this.moviesRepository.all();
+        const allMovies = await this.moviesRepository.fetchAll();
 
         if (duration) {
-            const moviesWithinDuration = movies.filter((movie) => isWithinValidDuration(+movie.runtime, duration));
+            const moviesWithinDuration = allMovies.filter((movie) => isWithinValidDuration(+movie.runtime, duration));
 
             return randomMovie(moviesWithinDuration);
         }
 
-        return randomMovie(movies);
+        return randomMovie(allMovies);
     }
 
     public async find(genresList: string[], duration?: number): Promise<DBMovie[]> {
-        const allMovies = await this.moviesRepository.all();
+        const allMovies = await this.moviesRepository.fetchAll();
 
         const filteredMovies = allMovies
             .map(movie => {

@@ -1,6 +1,7 @@
 import {body, query, validationResult, CustomValidator} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 import {StatusCodes} from "http-status-codes";
+import {createGenresRepository} from "../infrastructure/jsondb/genresRepository";
 
 export const validateAddMovieRequest = [
         body('genres')
@@ -94,6 +95,7 @@ export const validateSearchMovieRequest = [
 
     query('genres')
         .optional()
+        .bail()
         .custom((value, {req}) => {
             if (typeof req.query.genres === 'string' && req.query.genres.trim().includes(',')) {
                 return false;

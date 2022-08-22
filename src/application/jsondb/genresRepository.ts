@@ -1,5 +1,5 @@
-import {Genre} from "../../infrastructure/jsondb/db";
+import type {Genre} from "../../infrastructure/jsondb/db";
 
 export interface GenresRepository {
-    all(): Promise<Genre[]>;
+    fetchAll(): Promise<Genre[]>;
 }

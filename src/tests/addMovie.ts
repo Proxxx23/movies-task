@@ -1,7 +1,7 @@
 import request from "supertest";
 import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
-import {connection, lastInsertedId, ORIG_DB_NAME, TEST_DB_NAME} from "../infrastructure/jsondb/db";
+import {lastInsertedId, ORIG_DB_NAME, TEST_DB_NAME} from "../infrastructure/jsondb/db";
 import {createMoviesRepository} from "../infrastructure/jsondb/moviesRepository";
 import fs from "fs";
 
@@ -62,7 +62,7 @@ describe('Endpoint to add a movie', () => {
         );
 
         const moviesRepository = await createMoviesRepository();
-        const movies = await moviesRepository.all();
+        const movies = await moviesRepository.fetchAll();
 
         const addedMovie = movies[movies.length - 1];
 
