@@ -15,7 +15,7 @@ const add = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* ()
     if (!allGenresValid) {
         return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }
-    // todo: may be put in a factory, but factory will be coupled tightly with a framework (needs Request typing)
+    // todo???: May be put in a factory createFromRequest() method
     const movie = {
         id: 0,
         title: req.body.title,
@@ -37,15 +37,14 @@ const add = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* ()
 });
 exports.add = add;
 const search = (req, res) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const moviesRepository = yield (0, moviesRepository_1.createMoviesRepository)();
     const genresRepository = yield (0, genresRepository_1.createGenresRepository)();
     const moviesService = new movieService_1.MovieService(moviesRepository);
-    if (!req.query.genres && !req.query.duration) {
-        return res.send(yield moviesService.getRandomMovie());
+    if (!req.query.genres) {
+        return res.send(yield moviesService.getRandomMovie(req.query.duration));
     }
-    const validGenres = yield genresRepository.all();
-    const allGenresValid = (_a = req.query.genres) === null || _a === void 0 ? void 0 : _a.every((genre) => validGenres.includes(genre));
+    const allowedGenres = yield genresRepository.all();
+    const allGenresValid = req.query.genres.every((genre) => allowedGenres.includes(genre));
     if (!allGenresValid) {
         return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send('Invalid genre on a list!');
     }

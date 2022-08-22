@@ -1,7 +1,7 @@
 import {GenresRepository} from "../../application/jsondb/genresRepository";
-import {connection, MoviesDB} from "./db";
+import type {MoviesDB} from "./db";
 
-export const createGenresRepository = async (): Promise<GenresRepository> => genresRepository(await connection());
+export const createGenresRepository = async (db: MoviesDB): Promise<GenresRepository> => genresRepository(db);
 
 function genresRepository(db: MoviesDB): GenresRepository {
     async function all(): Promise<MoviesDB['genres']> {

@@ -9,6 +9,6 @@ router.get('/', (req, res) => {
     res.send('API is up and running');
 });
 router.post('/add', validators_1.validateAddMovieRequest, controller_1.add);
-router.get('/search', validators_1.validateSearchRequest, controller_1.search);
+router.get('/search', validators_1.validateSearchMovieRequest, controller_1.search);
 exports.default = router;
 //# sourceMappingURL=index.js.map

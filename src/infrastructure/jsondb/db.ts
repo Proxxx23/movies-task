@@ -1,7 +1,8 @@
 import fsPromised from "fs/promises";
 import {DBMovie} from "../../models/DBMovie";
 
-export const DB_PATH = '/../../db/db.json'; // fixme: ???
+export const PROD_DB_PATH = '/../../db/db.json';
+export const TEST_DB_PATH = '/../../db/db-test.json';
 
 export type MoviesDB = {
     genres: string[],
@@ -9,15 +10,14 @@ export type MoviesDB = {
 }
 
 export const connection = async (): Promise<MoviesDB> => {
-    try {
-        const data = await fsPromised.readFile(__dirname + DB_PATH, {encoding: 'utf8'});
-        const buff = Buffer.from(data);
+    const dbPath = process.env.NODE_ENV === 'production'
+        ? PROD_DB_PATH
+        : TEST_DB_PATH;
 
-        return JSON.parse(buff.toString()) as MoviesDB;
-    } catch (err) {
-        // fixme doesn't work!!!
-        throw new Error('Could not connect to database.');
-    }
+    const data = await fsPromised.readFile(__dirname + dbPath, {encoding: 'utf8'});
+    const buff = Buffer.from(data);
+
+    return JSON.parse(buff.toString()) as MoviesDB;
 }
 
 export const lastInsertedId = async (): Promise<number> => {

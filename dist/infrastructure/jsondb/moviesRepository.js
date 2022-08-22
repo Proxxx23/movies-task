@@ -16,9 +16,9 @@ function moviesRepository(db) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             movie.id = yield (0, db_1.lastInsertedId)();
             db.movies[movie.id] = movie;
-            yield promises_1.default.writeFile(__dirname + db_1.DB_PATH, JSON.stringify({
+            yield promises_1.default.writeFile(__dirname + db_1.PROD_DB_PATH, JSON.stringify({
                 genres: db.genres,
-                movies: db.movies.filter((x) => x !== null) // fixme: why do we have null value here and how to filter it out?
+                movies: db.movies.filter((x) => x !== null && x !== undefined)
             }));
         });
     }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSearchRequest = exports.validateAddMovieRequest = void 0;
+exports.validateSearchMovieRequest = exports.validateAddMovieRequest = void 0;
 const express_validator_1 = require("express-validator");
 const http_status_codes_1 = require("http-status-codes");
 exports.validateAddMovieRequest = [
@@ -77,7 +77,7 @@ exports.validateAddMovieRequest = [
         next();
     },
 ];
-exports.validateSearchRequest = [
+exports.validateSearchMovieRequest = [
     (0, express_validator_1.query)('duration')
         .optional()
         .isNumeric()

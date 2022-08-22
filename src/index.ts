@@ -1,3 +1,5 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import helmet from "helmet";
 import express from 'express';
 import router from './routes';

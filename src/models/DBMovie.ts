@@ -1,3 +1,4 @@
+// read model
 export interface DBMovie {
     id: number;
     title: string;
