@@ -2,7 +2,7 @@ import {MoviesRepository} from "../application/jsondb/moviesRepository";
 import {DBMovie} from "../models/DBMovie";
 import {Movie} from "../models/Movie";
 
-const RandomMovie = (movies: Movie[]): Movie => movies[Math.floor((Math.random() * movies.length))];
+const randomMovie = (movies: Movie[]): Movie => movies[Math.floor((Math.random() * movies.length))];
 const isWithinValidDuration = (movieRuntime: number, duration: number): boolean => movieRuntime > duration - 10 && movieRuntime < +duration + 10;
 
 export class MovieService {
@@ -15,31 +15,27 @@ export class MovieService {
         if (duration) {
             const moviesWithinDuration = movies.filter((movie) => isWithinValidDuration(+movie.runtime, duration));
 
-            return RandomMovie(moviesWithinDuration);
+            return randomMovie(moviesWithinDuration);
         }
 
-        return RandomMovie(movies);
+        return randomMovie(movies);
     }
 
-    public async find(genresList?: string[], duration?: number): Promise<DBMovie[]> {
-        const movies = await this.moviesRepository.all();
+    public async find(genresList: string[], duration?: number): Promise<DBMovie[]> {
+        const allMovies = await this.moviesRepository.all();
 
-        if (!genresList && !duration) {
-            return movies;
-        }
-
-        const filteredMovies = movies
+        const filteredMovies = allMovies
             .map(movie => {
-                const matchingGenresCount = movie.genres.filter((genre) => genresList.includes(genre)).length;
-                const withinDurationLimit = !duration
-                    ? true
-                    : isWithinValidDuration(+movie.runtime, duration);
+                    const matchingGenresCount = movie.genres.filter((genre) => genresList.includes(genre)).length;
+                    const withinDurationLimit = !duration
+                        ? true
+                        : isWithinValidDuration(+movie.runtime, duration);
 
-                if (matchingGenresCount > 0 && withinDurationLimit) {
-                    return {
-                        ...movie,
+                    if (matchingGenresCount > 0 && withinDurationLimit) {
+                        return {
+                            ...movie,
+                        }
                     }
-                }
                 }
             )
             .filter((movie) => movie !== undefined);
