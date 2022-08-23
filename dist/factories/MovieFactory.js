@@ -16,4 +16,4 @@ const createMovieEntityFromRequest = (request) => tslib_1.__awaiter(void 0, void
     };
 });
 exports.createMovieEntityFromRequest = createMovieEntityFromRequest;
-//# sourceMappingURL=MovieFactory.js.map
+//# sourceMappingURL=movieFactory.js.map

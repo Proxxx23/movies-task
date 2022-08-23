@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const supertest_1 = tslib_1.__importDefault(require("supertest"));
 const http_status_codes_1 = require("http-status-codes");
 const testServer_1 = require("../testServer");
-const db_1 = require("../infrastructure/jsondb/db");
+const db_1 = require("../../lib/database/db");
 const moviesRepository_1 = require("../infrastructure/jsondb/moviesRepository");
 const fs_1 = tslib_1.__importDefault(require("fs"));
 // Replicate original DB into test one after all the tests has finished
@@ -43,7 +43,7 @@ describe('Endpoint to add a movie', () => {
         const response = yield (0, supertest_1.default)(app)
             .post('/add')
             .send(movie);
-        const dbMovie = Object.assign({ id: (yield (0, db_1.lastInsertedId)()) - 1 }, movie);
+        const dbMovie = Object.assign({ id: 1 }, movie);
         expect(response.status).toBe(http_status_codes_1.StatusCodes.OK);
         expect(response.body).toStrictEqual({
             data: dbMovie

@@ -3,7 +3,7 @@ import {Movie} from "../models/Movie";
 
 export const createMovieEntityFromRequest = async (request: MovieRequest): Promise<Movie> => {
     return {
-        id: null, // to be set by a DB
+        id: null, // set by a DB
         title: request.title,
         year: request.year,
         runtime: request.runtime,

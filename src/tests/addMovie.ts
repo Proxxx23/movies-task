@@ -1,7 +1,7 @@
 import request from "supertest";
 import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
-import {lastInsertedId, ORIG_DB_NAME, TEST_DB_NAME} from "../infrastructure/jsondb/db";
+import {ORIG_DB_NAME, TEST_DB_NAME} from "../../lib/database/db";
 import {createMoviesRepository} from "../infrastructure/jsondb/moviesRepository";
 import fs from "fs";
 
@@ -50,7 +50,8 @@ describe('Endpoint to add a movie', () => {
             .send(movie);
 
         const dbMovie = {
-            id: await lastInsertedId() - 1,
+            id: 1,
+            // id: await lastInsertedId() - 1,
             ...movie
         };
 
