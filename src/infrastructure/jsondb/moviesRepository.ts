@@ -11,13 +11,13 @@ const Table = 'movies';
 
 function moviesRepository(): MoviesRepository {
     async function fetchAll(): Promise<DBMovie[]> {
-        const allRecords = await all<MoviesSchema>();
+        const database = await all<MoviesSchema>();
 
-        return allRecords.movies;
+        return database[Table];
     }
 
     async function add(movie: Movie): Promise<void> {
-        await insert<MoviesSchema>(Table, movie);
+        await insert(Table, movie);
     }
 
     return {

@@ -9,7 +9,7 @@ export const TEST_DB_PATH = '/../../src/db/' + TEST_DB_NAME;
 
 type IdentifiableObject = { id: number } & object;
 
-// In real DB this connection will be open and shared but let's leave it for now
+// In real DB this connection will be open (duplex stream?) but let's leave it for now
 const connection = async <TSchema extends object>(): Promise<TSchema> => {
     const data = await promisedFs.readFile(await dbPath(), {encoding: 'utf8'});
     const buffer = Buffer.from(data);
@@ -24,8 +24,8 @@ export const all = async <TSchema extends object>(): Promise<TSchema> => {
 /**
  * @throws Error
  */
-export const insert = async <TSchema extends object>(table: string, object: IdentifiableObject): Promise<number> => {
-    return all<TSchema>().then(async (database) => {
+export const insert = async (table: string, object: IdentifiableObject): Promise<number> => {
+    return all().then(async (database) => {
         const records = database[table] as IdentifiableObject[];
 
         object.id = await lastInsertedId(records);
@@ -46,6 +46,9 @@ const lastInsertedId = async (records: IdentifiableObject[]): Promise<number> =>
     return ++records[records.length - 1].id;
 }
 
+/**
+ * @throws Error
+ */
 const dbPath = async (): Promise<string> => {
 
     let path: string;
