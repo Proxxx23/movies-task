@@ -10,8 +10,8 @@ const Table = 'movies';
 function moviesRepository() {
     function fetchAll() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const allRecords = yield (0, db_1.all)();
-            return allRecords.movies;
+            const database = yield (0, db_1.all)();
+            return database[Table];
         });
     }
     function add(movie) {

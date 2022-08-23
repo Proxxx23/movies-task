@@ -43,7 +43,9 @@ describe('Endpoint to add a movie', () => {
         const response = yield (0, supertest_1.default)(app)
             .post('/add')
             .send(movie);
-        const dbMovie = Object.assign({ id: 1 }, movie);
+        const db = yield (0, db_1.all)();
+        const lastId = yield (0, db_1.lastInsertedId)(db.movies);
+        const dbMovie = Object.assign({ id: lastId - 1 }, movie);
         expect(response.status).toBe(http_status_codes_1.StatusCodes.OK);
         expect(response.body).toStrictEqual({
             data: dbMovie

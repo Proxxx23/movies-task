@@ -1,9 +1,10 @@
 import request from "supertest";
 import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
-import {ORIG_DB_NAME, TEST_DB_NAME} from "../../lib/database/db";
+import {all, lastInsertedId, ORIG_DB_NAME, TEST_DB_NAME} from "../../lib/database/db";
 import {createMoviesRepository} from "../infrastructure/jsondb/moviesRepository";
 import fs from "fs";
+import {MoviesSchema} from "../db/schema";
 
 // Replicate original DB into test one after all the tests has finished
 // We want to have clear DB (made of production one) before suite runs
@@ -49,9 +50,11 @@ describe('Endpoint to add a movie', () => {
             .post('/add')
             .send(movie);
 
+        const db = await all<MoviesSchema>();
+        const lastId = await lastInsertedId(db.movies);
+
         const dbMovie = {
-            id: 1,
-            // id: await lastInsertedId() - 1,
+            id: lastId - 1,
             ...movie
         };
 

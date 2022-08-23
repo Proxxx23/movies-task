@@ -28,7 +28,8 @@ export const insert = async (table: string, object: IdentifiableObject): Promise
     return all().then(async (database) => {
         const records = database[table] as IdentifiableObject[];
 
-        object.id = await lastInsertedId(records);
+        let lastId = await lastInsertedId(records);
+        object.id = ++lastId;
 
         if (!database.hasOwnProperty(table)) {
             throw new Error(`Table ${table} does not exist in database.`);
@@ -38,12 +39,12 @@ export const insert = async (table: string, object: IdentifiableObject): Promise
 
         await promisedFs.writeFile(await dbPath(), JSON.stringify(database));
 
-        return await lastInsertedId(database[table]);
+        return object.id;
     });
 }
 
-const lastInsertedId = async (records: IdentifiableObject[]): Promise<number> => {
-    return ++records[records.length - 1].id;
+export const lastInsertedId = async (records: IdentifiableObject[]): Promise<number> => {
+    return records[records.length - 1].id;
 }
 
 /**
