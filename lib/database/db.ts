@@ -7,9 +7,9 @@ export const TEST_DB_NAME = 'db-test.json';
 export const PROD_DB_PATH = '/../../src/db/' + PROD_DB_NAME;
 export const TEST_DB_PATH = '/../../src/db/' + TEST_DB_NAME;
 
-type IdentifiableObject = { id: number } & object;
+type IdentifiableObject = { id: number } & Record<string, unknown>;
 
-// In real DB this connection will be open (duplex stream?) but let's leave it for now
+// In real DB this connection will be open but let's leave it for now
 const connection = async <TSchema extends object>(): Promise<TSchema> => {
     const data = await promisedFs.readFile(await dbPath(), {encoding: 'utf8'});
     const buffer = Buffer.from(data);
