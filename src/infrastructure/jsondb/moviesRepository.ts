@@ -2,7 +2,7 @@ import {MoviesRepository} from "../../application/jsondb/moviesRepository";
 import {Movie} from "../../models/Movie";
 import {DBMovie} from "../../models/DBMovie";
 // @ts-ignore
-import {insert, all} from "../../../lib/database/db";
+import {insert, all} from "../../../lib/database/src/db";
 import {MoviesSchema} from "../../application/jsondb/schema";
 
 export const createMoviesRepository = async (): Promise<MoviesRepository> => moviesRepository();

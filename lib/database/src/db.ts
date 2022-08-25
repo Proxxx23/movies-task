@@ -53,10 +53,10 @@ const dbPath = async (): Promise<string> => {
     let path: string;
     switch (process.env.NODE_ENV) {
         case 'production':
-            path = `${__dirname}/${PROD_DB}`;
+            path = `${__dirname}/../${PROD_DB}`;
             break;
         case 'test':
-            path = `${__dirname}/${TEST_DB}`;
+            path = `${__dirname}/../${TEST_DB}`;
             break;
         default:
             throw new Error('Could not connect to a database: invalid environment');
