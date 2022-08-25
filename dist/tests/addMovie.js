@@ -9,14 +9,14 @@ const moviesRepository_1 = require("../infrastructure/jsondb/moviesRepository");
 const fs_1 = tslib_1.__importDefault(require("fs"));
 // Replicate original DB into test one after all the tests has finished
 // We want to have clear DB (made of production one) before suite runs
-afterAll((() => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
-    fs_1.default.copyFile(__dirname + '/../db/' + db_1.ORIG_DB_NAME, __dirname + '/../db/' + db_1.TEST_DB_NAME, (err) => {
+afterAll((() => {
+    fs_1.default.copyFile(__dirname + '/../../lib/database/' + db_1.ORIG_DB, __dirname + '/../../lib/database/' + db_1.TEST_DB, (err) => {
         if (err) {
-            console.error('Could not replicate test DB from original structure.');
+            console.error(`Could not replicate test DB from original structure. Error ${err}.`);
             process.exit();
         }
     });
-})));
+}));
 describe('Endpoint to add a movie', () => {
     const app = (0, testServer_1.createTestServer)();
     it('responds with 422 code for invalid movie genre', () => tslib_1.__awaiter(void 0, void 0, void 0, function* () {

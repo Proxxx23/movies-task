@@ -1,6 +1,6 @@
 import {GenresRepository} from "../../application/jsondb/genresRepository";
 import {all} from "../../../lib/database/db";
-import {Genre, MoviesSchema} from "../../db/schema";
+import {Genre, MoviesSchema} from "../../application/jsondb/schema";
 
 const Table = 'genres';
 

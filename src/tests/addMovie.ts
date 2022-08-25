@@ -1,21 +1,21 @@
 import request from "supertest";
 import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
-import {all, lastInsertedId, ORIG_DB_NAME, TEST_DB_NAME} from "../../lib/database/db";
+import {all, lastInsertedId, ORIG_DB, TEST_DB} from "../../lib/database/db";
 import {createMoviesRepository} from "../infrastructure/jsondb/moviesRepository";
 import fs from "fs";
-import {MoviesSchema} from "../db/schema";
+import {MoviesSchema} from "../application/jsondb/schema";
 
 // Replicate original DB into test one after all the tests has finished
 // We want to have clear DB (made of production one) before suite runs
-afterAll((async () => {
-    fs.copyFile(__dirname + '/../db/' + ORIG_DB_NAME, __dirname + '/../db/' + TEST_DB_NAME, (err) => {
+afterAll((() => {
+    fs.copyFile(__dirname + '/../../lib/database/' + ORIG_DB, __dirname + '/../../lib/database/' + TEST_DB, (err) => {
         if (err) {
-            console.error('Could not replicate test DB from original structure.');
+            console.error(`Could not replicate test DB from original structure. Error ${err}.`);
             process.exit();
         }
     })
-}))
+}));
 
 describe('Endpoint to add a movie', () => {
     const app = createTestServer();
@@ -54,7 +54,7 @@ describe('Endpoint to add a movie', () => {
         const lastId = await lastInsertedId(db.movies);
 
         const dbMovie = {
-            id: lastId - 1,
+            id: lastId,
             ...movie
         };
 

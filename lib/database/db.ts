@@ -1,13 +1,11 @@
 import promisedFs from "fs/promises";
 
-export const PROD_DB_NAME = 'db.json';
-export const ORIG_DB_NAME = 'db-orig.json';
-export const TEST_DB_NAME = 'db-test.json';
+// fixme: it should all be defined in .env to be lib unaware
+const PROD_DB = 'db.json';
+export const ORIG_DB = 'db-orig.json';
+export const TEST_DB = 'db-test.json';
 
-export const PROD_DB_PATH = '/../../src/db/' + PROD_DB_NAME;
-export const TEST_DB_PATH = '/../../src/db/' + TEST_DB_NAME;
-
-type IdentifiableObject = { id: number } & Record<string, unknown>;
+type IdentifiableObject = { id: number } & Readonly<Record<string, any>>;
 
 // In real DB this connection will be open but let's leave it for now
 const connection = async <TSchema extends object>(): Promise<TSchema> => {
@@ -24,7 +22,7 @@ export const all = async <TSchema extends object>(): Promise<TSchema> => {
 /**
  * @throws Error
  */
-export const insert = async (table: string, object: IdentifiableObject): Promise<number> => {
+export const insert = async (table: string, object: IdentifiableObject): Promise<IdentifiableObject['id']> => {
     return all().then(async (database) => {
         const records = database[table] as IdentifiableObject[];
 
@@ -43,7 +41,7 @@ export const insert = async (table: string, object: IdentifiableObject): Promise
     });
 }
 
-export const lastInsertedId = async (records: IdentifiableObject[]): Promise<number> => {
+export const lastInsertedId = async (records: IdentifiableObject[]): Promise<IdentifiableObject['id']> => {
     return records[records.length - 1].id;
 }
 
@@ -55,21 +53,21 @@ const dbPath = async (): Promise<string> => {
     let path: string;
     switch (process.env.NODE_ENV) {
         case 'production':
-            path = PROD_DB_PATH;
+            path = `${__dirname}/${PROD_DB}`;
             break;
         case 'test':
-            path = TEST_DB_PATH;
+            path = `${__dirname}/${TEST_DB}`;
             break;
         default:
             throw new Error('Could not connect to a database: invalid environment');
     }
 
     try {
-        await promisedFs.access(__dirname + path);
+        await promisedFs.access(path);
     } catch (err) {
         throw new Error('Could not connect to a database: no database found');
     }
 
-    return __dirname + path;
+    return path;
 }
 

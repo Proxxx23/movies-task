@@ -1,8 +1,7 @@
 import {MoviesRepository} from "../application/jsondb/moviesRepository";
 import {DBMovie} from "../models/DBMovie";
-import {Movie} from "../models/Movie";
 
-const randomMovie = (movies: Movie[]): Movie => movies[Math.floor((Math.random() * movies.length))];
+const randomMovie = (movies: DBMovie[]): DBMovie => movies[Math.floor((Math.random() * movies.length))];
 const isWithinValidDuration = (movieRuntime: number, duration: number): boolean => movieRuntime >= duration - 10 && movieRuntime <= +duration + 10;
 
 export class MoviesService {
@@ -45,7 +44,7 @@ export class MoviesService {
         return this.retrieveUniqueMovies(filteredMovies);
     }
 
-    sortByMatchingGenres(movies: Movie[], genresList: string[]) {
+    sortByMatchingGenres(movies: DBMovie[], genresList: string[]) {
         movies.sort((movie1, movie2) => {
             const m1 = movie1.genres.filter((genre) => genresList.includes(genre)).length;
             const m2 = movie2.genres.filter((genre) => genresList.includes(genre)).length;
@@ -54,7 +53,7 @@ export class MoviesService {
         });
     }
 
-    retrieveUniqueMovies(movies: Movie[]): Movie[] {
+    retrieveUniqueMovies(movies: DBMovie[]): DBMovie[] {
         const map = new Map();
 
         for (const movie of movies) {
