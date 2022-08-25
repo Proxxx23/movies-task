@@ -37,7 +37,7 @@ export const insert = async (table: string, object: IdentifiableObject): Promise
 
         database[table].push(object);
 
-        await promisedFs.writeFile(await dbPath(), JSON.stringify(database));
+        await promisedFs.writeFile(await dbPath(), JSON.stringify(database, null, 4));
 
         return object.id;
     });
