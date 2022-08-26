@@ -27,16 +27,15 @@ export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Pr
     const moviesRepository = await createMoviesRepository();
     const genresRepository = await createGenresRepository();
 
+    const validGenres = await genresRepository.fetchAll();
+
+    const allGenresValid = req.body.genres.every((genre) => validGenres.includes(genre));
+    if (!allGenresValid) {
+        return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send('Invalid genre on a list!');
+    }
+
+    const movie = createMovieEntityFromRequest(req.body);
     try {
-        const validGenres = await genresRepository.fetchAll();
-
-        const allGenresValid = req.body.genres.every((genre) => validGenres.includes(genre));
-        if (!allGenresValid) {
-            return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send('Invalid genre on a list!');
-        }
-
-        const movie = await createMovieEntityFromRequest(req.body);
-
         await moviesRepository.add(movie);
 
         return res.send(
@@ -56,26 +55,19 @@ export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Pr
 export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Promise<Response<DBMovie[] | string>> => {
     const moviesService = new MoviesService(await createMoviesRepository());
 
-    try {
-        const genres = Array.isArray(req.query.genres) ? req.query.genres : [req.query.genres];
-        if (!req.query.genres || genres.length === 0) {
-            return res.send(
-                {
-                    data: await moviesService.getRandomMovie(req.query.duration)
-                }
-            );
-        }
-
+    const genres = Array.isArray(req.query.genres) ? req.query.genres : [req.query.genres];
+    if (!req.query.genres || genres.length === 0) {
         return res.send(
             {
-                data: await moviesService.find(genres, req.query.duration)
+                data: await moviesService.getRandomMovie(req.query.duration)
             }
         );
-    } catch (err) {
-        if (err instanceof Error) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err.message);
-        }
-
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - could not perform search!');
     }
+
+    return res.send(
+        {
+            data: await moviesService.find(genres, req.query.duration)
+        }
+    );
+
 }

@@ -1,7 +1,7 @@
 import {MovieRequest} from "../controllers/moviesController";
 import {Movie} from "../models/Movie";
 
-export const createMovieEntityFromRequest = async (request: MovieRequest): Promise<Movie> => {
+export const createMovieEntityFromRequest = (request: MovieRequest): Movie => {
     return new Movie(
         null, // set by a DB
         request.title,
