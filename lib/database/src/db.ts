@@ -1,4 +1,5 @@
 import promisedFs from "fs/promises";
+import fs from "fs";
 
 // fixme: it should all be defined in .env to be lib unaware
 const PROD_DB = 'db.json';
@@ -23,26 +24,31 @@ export const all = async <TSchema extends object>(): Promise<TSchema> => {
  * @throws Error
  */
 export const insert = async (table: string, object: IdentifiableObject): Promise<IdentifiableObject['id']> => {
+    // fixme: await
     return all().then(async (database) => {
-        const records = database[table] as IdentifiableObject[];
-
-        let lastId = await lastInsertedId(records);
-        object.id = ++lastId;
-
-        if (!database.hasOwnProperty(table)) {
-            throw new Error(`Table ${table} does not exist in database.`);
+        if (!database[table]) {
+            throw new Error(`Could not read from database. Table "${table}" does not exist in database.`);
         }
 
+        let lastId = await lastInsertedId(table);
+
+        object.id = ++lastId;
         database[table].push(object);
 
-        await promisedFs.writeFile(await dbPath(), JSON.stringify(database, null, 4));
+        //fixme: it can be done synchronously
+        fs.writeFile(await dbPath(), JSON.stringify(database, null, 4), () => {});
 
         return object.id;
     });
 }
 
-export const lastInsertedId = async (records: IdentifiableObject[]): Promise<IdentifiableObject['id']> => {
-    return records[records.length - 1].id;
+export const lastInsertedId = async (table: string): Promise<IdentifiableObject['id'] | undefined> => {
+    const database = await all();
+    const dbtable = database[table] || undefined;
+
+    return Array.isArray(dbtable)
+        ? database[table][database[table].length - 1].id
+        : undefined;
 }
 
 /**

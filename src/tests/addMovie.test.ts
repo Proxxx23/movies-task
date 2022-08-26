@@ -50,8 +50,7 @@ describe('Endpoint to add a movie', () => {
             .post('/add')
             .send(movie);
 
-        const db = await all<MoviesSchema>();
-        const lastId = await lastInsertedId(db.movies);
+        const lastId = await lastInsertedId('movies');
 
         const dbMovie = {
             id: lastId,
