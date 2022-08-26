@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const supertest_1 = tslib_1.__importDefault(require("supertest"));
 const http_status_codes_1 = require("http-status-codes");
 const testServer_1 = require("../testServer");
-const db_1 = require("../../lib/database/src/db");
+const db_1 = require("../../lib/database/src/jsondb");
 const moviesRepository_1 = require("../infrastructure/jsondb/moviesRepository");
 const fs_1 = tslib_1.__importDefault(require("fs"));
 // Replicate original DB into test one after all the tests has finished

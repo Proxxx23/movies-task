@@ -1,7 +1,7 @@
 import request from "supertest";
 import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
-import {all, lastInsertedId, ORIG_DB, TEST_DB} from "../../lib/database/src/db";
+import {all, lastInsertedId, ORIG_DB, TEST_DB} from "../../lib/database/src/jsondb";
 import {createMoviesRepository} from "../infrastructure/jsondb/moviesRepository";
 import fs from "fs";
 import {MoviesSchema} from "../application/jsondb/schema";

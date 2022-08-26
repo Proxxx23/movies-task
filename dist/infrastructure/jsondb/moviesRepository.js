@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMoviesRepository = void 0;
 const tslib_1 = require("tslib");
 // @ts-ignore
-const db_1 = require("../../../lib/database/src/db");
+const db_1 = require("../../../lib/database/src/jsondb");
 const createMoviesRepository = () => tslib_1.__awaiter(void 0, void 0, void 0, function* () { return moviesRepository(); });
 exports.createMoviesRepository = createMoviesRepository;
 const Table = 'movies';
