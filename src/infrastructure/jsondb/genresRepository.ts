@@ -4,7 +4,7 @@ import {Genre, MoviesSchema} from "../../application/jsondb/schema";
 
 const Table = 'genres';
 
-export const createGenresRepository = async (): Promise<GenresRepository> => genresRepository();
+export const createGenresRepository = (): GenresRepository => genresRepository();
 
 function genresRepository(): GenresRepository {
     async function fetchAll(): Promise<Genre[]> {

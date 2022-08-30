@@ -5,7 +5,7 @@ import {DBMovie} from "../../models/DBMovie";
 import {insert, all} from "../../../lib/database/src/jsondb";
 import {MoviesSchema} from "../../application/jsondb/schema";
 
-export const createMoviesRepository = async (): Promise<MoviesRepository> => moviesRepository();
+export const createMoviesRepository = (): MoviesRepository => moviesRepository();
 
 const Table = 'movies';
 

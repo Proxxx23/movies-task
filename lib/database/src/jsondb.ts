@@ -1,7 +1,7 @@
 import promisedFs from "fs/promises";
 import fs from "fs";
 
-// fixme: it should all be defined in .env to be lib unaware
+// Ideally this will be read by a lib from *.env file
 const PROD_DB = 'db.json';
 export const ORIG_DB = 'db-orig.json';
 export const TEST_DB = 'db-test.json';
@@ -24,22 +24,19 @@ export const all = async <TSchema extends object>(): Promise<TSchema> => {
  * @throws Error
  */
 export const insert = async (table: string, object: IdentifiableObject): Promise<IdentifiableObject['id']> => {
-    // fixme: await
-    return all().then(async (database) => {
-        if (!database[table]) {
-            throw new Error(`Could not read from database. Table "${table}" does not exist in database.`);
-        }
+    const database = await all();
+    if (!database[table]) {
+        throw new Error(`Could not read from database. Table "${table}" does not exist in database.`);
+    }
 
-        let lastId = await lastInsertedId(table);
+    let lastId = await lastInsertedId(table);
 
-        object.id = ++lastId;
-        database[table].push(object);
+    object.id = ++lastId;
+    database[table].push(object);
 
-        //fixme: it can be done synchronously
-        fs.writeFile(await dbPath(), JSON.stringify(database, null, 4), () => {});
+    fs.writeFileSync(await dbPath(), JSON.stringify(database, null, 4));
 
-        return object.id;
-    });
+    return object.id;
 }
 
 export const lastInsertedId = async (table: string): Promise<IdentifiableObject['id'] | undefined> => {

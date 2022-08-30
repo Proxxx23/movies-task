@@ -1,4 +1,4 @@
-// write model
+// read model
 
 export class DBMovie {
     constructor(

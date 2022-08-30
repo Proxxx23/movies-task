@@ -1,5 +1,5 @@
 "use strict";
-// write model
+// read model
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DBMovie = void 0;
 class DBMovie {

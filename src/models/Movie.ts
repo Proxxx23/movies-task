@@ -13,4 +13,8 @@ export class Movie {
         private readonly posterUrl: string | null,
     ) {
     }
+
+    isValid(): boolean {
+        return this.id !== null;
+    }
 }

@@ -14,6 +14,9 @@ class Movie {
         this.plot = plot;
         this.posterUrl = posterUrl;
     }
+    isValid() {
+        return this.id !== null;
+    }
 }
 exports.Movie = Movie;
 //# sourceMappingURL=Movie.js.map

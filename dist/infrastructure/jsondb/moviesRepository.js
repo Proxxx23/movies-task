@@ -3,20 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMoviesRepository = void 0;
 const tslib_1 = require("tslib");
 // @ts-ignore
-const db_1 = require("../../../lib/database/src/jsondb");
-const createMoviesRepository = () => tslib_1.__awaiter(void 0, void 0, void 0, function* () { return moviesRepository(); });
+const jsondb_1 = require("../../../lib/database/src/jsondb");
+const createMoviesRepository = () => moviesRepository();
 exports.createMoviesRepository = createMoviesRepository;
 const Table = 'movies';
 function moviesRepository() {
     function fetchAll() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const database = yield (0, db_1.all)();
+            const database = yield (0, jsondb_1.all)();
             return database[Table];
         });
     }
     function add(movie) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            yield (0, db_1.insert)(Table, movie);
+            yield (0, jsondb_1.insert)(Table, movie);
         });
     }
     return {

@@ -5,7 +5,7 @@ import {MoviesService} from "../services/moviesService";
 import {Movie} from "../models/Movie";
 import {StatusCodes} from "http-status-codes";
 import {DBMovie} from "../models/DBMovie";
-import {createMovieEntityFromRequest} from "../factories/movieFactory";
+import {createMovieFromRequest} from "../factories/movieFactory";
 
 interface SearchQueryParams {
     genres?: string[],
@@ -24,9 +24,7 @@ export interface MovieRequest {
 }
 
 export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Promise<Response<Movie[] | string>> => {
-    const moviesRepository = await createMoviesRepository();
-    const genresRepository = await createGenresRepository();
-
+    const genresRepository = createGenresRepository();
     const validGenres = await genresRepository.fetchAll();
 
     const allGenresValid = req.body.genres.every((genre) => validGenres.includes(genre));
@@ -34,7 +32,9 @@ export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Pr
         return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send('Invalid genre on a list!');
     }
 
-    const movie = createMovieEntityFromRequest(req.body);
+    const movie = createMovieFromRequest(req.body);
+    const moviesRepository = createMoviesRepository();
+
     try {
         await moviesRepository.add(movie);
 
@@ -53,7 +53,7 @@ export const add = async (req: Request<{}, {}, MovieRequest>, res: Response): Pr
 }
 
 export const search = async (req: Request<{}, {}, {}, SearchQueryParams>, res: Response): Promise<Response<DBMovie[] | string>> => {
-    const moviesService = new MoviesService(await createMoviesRepository());
+    const moviesService = new MoviesService(createMoviesRepository());
 
     const genres = Array.isArray(req.query.genres) ? req.query.genres : [req.query.genres];
     if (!req.query.genres || genres.length === 0) {
