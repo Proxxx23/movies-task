@@ -6,7 +6,7 @@ Copy `.env.example` file into `.env` file.
 
 ## Run app
 - `npm install` if you run it for the first time, and then...
-- `npm run dev` (will run in a nodeamon mode)
+- `npm run dev` (will run in a nodemon mode)
 
 ## Tests
 Tests use `testServer.ts`. NODE_ENV env variable is set to a value different than `"production"` there, which means tests will operate on a test database (`db-test.json`).
