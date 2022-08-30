@@ -8,7 +8,7 @@ export const TEST_DB = 'db-test.json';
 
 type IdentifiableObject = { id: number } & Readonly<Record<string, any>>;
 
-// In real DB this connection will be open but let's leave it for now
+// In real DB this connection will remain open but let's leave it for now
 const connection = async <TSchema extends object>(): Promise<TSchema> => {
     const data = await promisedFs.readFile(await dbPath(), {encoding: 'utf8'});
     const buffer = Buffer.from(data);
