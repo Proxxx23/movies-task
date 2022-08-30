@@ -13,7 +13,7 @@ const connection = async <TSchema extends object>(): Promise<TSchema> => {
     const data = await promisedFs.readFile(await dbPath(), {encoding: 'utf8'});
     const buffer = Buffer.from(data);
 
-    return JSON.parse(buffer.toString()) as TSchema;
+    return JSON.parse(buffer.toString());
 }
 
 export const all = async <TSchema extends object>(): Promise<TSchema> => {
