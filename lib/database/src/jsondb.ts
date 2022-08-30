@@ -30,6 +30,9 @@ export const insert = async (table: string, object: IdentifiableObject): Promise
     }
 
     let lastId = await lastInsertedId(table);
+    if (!lastId) {
+        throw new Error(`Could not get last record from database. Table "${table}" may not exist.`);
+    }
 
     object.id = ++lastId;
     database[table].push(object);
@@ -43,9 +46,15 @@ export const lastInsertedId = async (table: string): Promise<IdentifiableObject[
     const database = await all();
     const dbtable = database[table] || undefined;
 
-    return Array.isArray(dbtable)
-        ? database[table][database[table].length - 1].id
-        : undefined;
+    if (!Array.isArray(dbtable)) {
+        return undefined;
+    }
+
+    if (database[table].length - 1 === -1) {
+        return 0; // empty table
+    }
+
+    return database[table][database[table].length - 1].id;
 }
 
 /**
