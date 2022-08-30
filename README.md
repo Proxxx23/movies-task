@@ -9,9 +9,9 @@ Copy `.env.example` file into `.env` file.
 - `npm run dev` (will run in a nodemon mode)
 
 ## Tests
-Tests use `testServer.ts`. NODE_ENV env variable is set to a value different than `"production"` there, which means tests will operate on a test database (`db-test.json`).
+Tests use `testServer.ts`. NODE_ENV env variable is set to a value different than `"production"` there, which mean tests will operate on a test database (`db-test.json`).
 
-After all suites will ran, database is replicated from `db-orig.json` into `db-test.json` to ensure tests always run on clean original database.
+After all suites have ran database is replicated from `db-orig.json` into `db-test.json` to ensure tests always run on clean original database.
 
 To run tests: `npm run test`
 
