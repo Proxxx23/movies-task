@@ -1,5 +1,5 @@
 # tsh-movies
-This is a small API made for a technical recruitment process for The Software House. It allows for adding and searching for the movies.
+This is a small API made for a technical recruitment process. It allows adding and searching for the movies in DB with JSON format.
 
 ## Prerequisites
 Copy `.env.example` file into `.env` file.
