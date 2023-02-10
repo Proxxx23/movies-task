@@ -1,4 +1,4 @@
-# tsh-movies
+# Description
 This is a small API made for a technical recruitment process. It allows adding and searching for the movies in DB with JSON format.
 
 ## Prerequisites
