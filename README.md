@@ -19,8 +19,8 @@ To run tests: `npm run test`
 
 ### Endpoints
 
-| Endpoints                                                           |
-|---------------------------------------------------------------------|
-| [GET] /search?duration={number}&category={string}&category={string} |
-| [POST] /add                                                         |
+| Endpoints                                                         |
+|-------------------------------------------------------------------|
+| [GET] /search?duration={number}&genres={string}&genres={string} |
+| [POST] /add                                                       |
 
